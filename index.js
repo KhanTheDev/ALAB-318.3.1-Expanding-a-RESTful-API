@@ -189,4 +189,10 @@ app.get('/users/:id/comments', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log('Available endpoints:');
+  console.log('- GET /api/users/:id/posts');
+  console.log('- GET /api/posts?userId=<value>');
+  console.log('- GET/POST/PATCH/DELETE /comments');
+  console.log('- GET /posts/:id/comments');
+  console.log('- GET /users/:id/comments');
 });
