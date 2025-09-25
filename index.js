@@ -111,6 +111,21 @@ app.get('/api/users/:id/posts', (req, res) => {
 
 // Comments routes
 app.get('/comments', (req, res) => {
+  const { userId, postId } = req.query;
+  
+  if (userId && postId) {
+    const filtered = comments.filter(c => c.userId === parseInt(userId) && c.postId === parseInt(postId));
+    return res.json(filtered);
+  }
+  if (userId) {
+    const filtered = comments.filter(c => c.userId === parseInt(userId));
+    return res.json(filtered);
+  }
+  if (postId) {
+    const filtered = comments.filter(c => c.postId === parseInt(postId));
+    return res.json(filtered);
+  }
+  
   res.json(comments);
 });
 
@@ -147,6 +162,29 @@ app.delete('/comments/:id', (req, res) => {
   
   comments.splice(index, 1);
   res.status(204).send();
+});
+
+// Nested routes
+app.get('/posts/:id/comments', (req, res) => {
+  const { userId } = req.query;
+  let postComments = comments.filter(c => c.postId === parseInt(req.params.id));
+  
+  if (userId) {
+    postComments = postComments.filter(c => c.userId === parseInt(userId));
+  }
+  
+  res.json(postComments);
+});
+
+app.get('/users/:id/comments', (req, res) => {
+  const { postId } = req.query;
+  let userComments = comments.filter(c => c.userId === parseInt(req.params.id));
+  
+  if (postId) {
+    userComments = userComments.filter(c => c.postId === parseInt(postId));
+  }
+  
+  res.json(userComments);
 });
 
 app.listen(PORT, () => {
