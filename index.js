@@ -15,6 +15,8 @@ let posts = [
   { id: 2, title: 'Second Post', body: 'This is the second post', userId: 2 }
 ];
 
+let comments = [];
+
 // Basic routes
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the RESTful API' });
@@ -105,6 +107,46 @@ app.delete('/api/posts/:id', (req, res) => {
 app.get('/api/users/:id/posts', (req, res) => {
   const userPosts = posts.filter(p => p.userId === parseInt(req.params.id));
   res.json(userPosts);
+});
+
+// Comments routes
+app.get('/comments', (req, res) => {
+  res.json(comments);
+});
+
+app.post('/comments', (req, res) => {
+  const { userId, postId, body } = req.body;
+  const newComment = { 
+    id: comments.length + 1, 
+    userId: parseInt(userId), 
+    postId: parseInt(postId), 
+    body 
+  };
+  comments.push(newComment);
+  res.status(201).json(newComment);
+});
+
+app.get('/comments/:id', (req, res) => {
+  const comment = comments.find(c => c.id === parseInt(req.params.id));
+  if (!comment) return res.status(404).json({ error: 'Comment not found' });
+  res.json(comment);
+});
+
+app.patch('/comments/:id', (req, res) => {
+  const comment = comments.find(c => c.id === parseInt(req.params.id));
+  if (!comment) return res.status(404).json({ error: 'Comment not found' });
+  
+  const { body } = req.body;
+  if (body) comment.body = body;
+  res.json(comment);
+});
+
+app.delete('/comments/:id', (req, res) => {
+  const index = comments.findIndex(c => c.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ error: 'Comment not found' });
+  
+  comments.splice(index, 1);
+  res.status(204).send();
 });
 
 app.listen(PORT, () => {
