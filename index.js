@@ -33,6 +33,9 @@ app.get('/api/users', (req, res) => {
 
 app.post('/api/users', (req, res) => {
   const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Name and email are required' });
+  }
   const newUser = { id: users.length + 1, name, email };
   users.push(newUser);
   res.status(201).json(newUser);
@@ -74,7 +77,10 @@ app.get('/api/posts', (req, res) => {
 
 app.post('/api/posts', (req, res) => {
   const { title, body, userId } = req.body;
-  const newPost = { id: posts.length + 1, title, body, userId };
+  if (!title || !body || !userId) {
+    return res.status(400).json({ error: 'Title, body, and userId are required' });
+  }
+  const newPost = { id: posts.length + 1, title, body, userId: parseInt(userId) };
   posts.push(newPost);
   res.status(201).json(newPost);
 });
@@ -131,6 +137,9 @@ app.get('/comments', (req, res) => {
 
 app.post('/comments', (req, res) => {
   const { userId, postId, body } = req.body;
+  if (!userId || !postId || !body) {
+    return res.status(400).json({ error: 'userId, postId, and body are required' });
+  }
   const newComment = { 
     id: comments.length + 1, 
     userId: parseInt(userId), 
