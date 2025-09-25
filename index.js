@@ -62,6 +62,11 @@ app.delete('/api/users/:id', (req, res) => {
 
 // Posts routes
 app.get('/api/posts', (req, res) => {
+  const { userId } = req.query;
+  if (userId) {
+    const filteredPosts = posts.filter(p => p.userId === parseInt(userId));
+    return res.json(filteredPosts);
+  }
   res.json(posts);
 });
 
@@ -94,6 +99,12 @@ app.delete('/api/posts/:id', (req, res) => {
   
   posts.splice(index, 1);
   res.status(204).send();
+});
+
+// New user routes
+app.get('/api/users/:id/posts', (req, res) => {
+  const userPosts = posts.filter(p => p.userId === parseInt(req.params.id));
+  res.json(userPosts);
 });
 
 app.listen(PORT, () => {
